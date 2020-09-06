@@ -84,6 +84,17 @@ filter(litters_df, group == "Mod8")
 filter(litters_df, group %in% c("Con7", "Mod8"))
 ```
 
+## `mutate`
+
+```{r}
+mutate(
+  litters_df, 
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group))
+```
+
+
+
 
 
 
