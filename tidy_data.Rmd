@@ -102,4 +102,32 @@ lotr_tidy =
   )
 ```
 
+## Joining datasets
+
+Import and clean the FAS datasets. 
+
+```{r}
+pups_df = 
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"))
+
+litters_df = 
+  read_csv("./data/FAS_litters.csv") %>% 
+  janitor::clean_names() %>% 
+  relocate(litter_number) %>% 
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+```
+
+Next up, time to join them!
+
+```{r}
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number") %>% 
+  arrange(litter_number) %>% 
+  relocate(litter_number, dose, day_of_tx)
+```
+
+
+
 

@@ -113,3 +113,53 @@ lotr_tidy =
     values_to = "words"
   )
 ```
+
+## Joining datasets
+
+Import and clean the FAS datasets.
+
+``` r
+pups_df = 
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(sex = recode(sex, `1` = "male", `2` = "female"))
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `Litter Number` = col_character(),
+    ##   Sex = col_double(),
+    ##   `PD ears` = col_double(),
+    ##   `PD eyes` = col_double(),
+    ##   `PD pivot` = col_double(),
+    ##   `PD walk` = col_double()
+    ## )
+
+``` r
+litters_df = 
+  read_csv("./data/FAS_litters.csv") %>% 
+  janitor::clean_names() %>% 
+  relocate(litter_number) %>% 
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   Group = col_character(),
+    ##   `Litter Number` = col_character(),
+    ##   `GD0 weight` = col_double(),
+    ##   `GD18 weight` = col_double(),
+    ##   `GD of Birth` = col_double(),
+    ##   `Pups born alive` = col_double(),
+    ##   `Pups dead @ birth` = col_double(),
+    ##   `Pups survive` = col_double()
+    ## )
+
+Next up, time to join them\!
+
+``` r
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number") %>% 
+  arrange(litter_number) %>% 
+  relocate(litter_number, dose, day_of_tx)
+```
