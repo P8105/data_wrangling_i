@@ -65,3 +65,37 @@ skimr::skim(litters_df)
 
 
 
+## Options in `read_*`
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    skip = 10, col_names = FALSE)
+```
+
+Look at NA values.
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c("NA", 19, "."))
+```
+
+Column types
+
+
+```{r}
+litters_df = 
+  read_csv(
+    "data/FAS_litters.csv",
+    col_types = 
+      cols(
+        `GD0 weight` = col_character()
+      ))
+```
+
+
+
