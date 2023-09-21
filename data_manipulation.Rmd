@@ -7,3 +7,84 @@ output: github_document
 library(tidyverse)
 ```
 
+Import FAS litters and pups.
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+pups_df = janitor::clean_names(pups_df)
+
+
+```
+
+
+## `select`
+
+`select` is used to select columns!
+
+```{r}
+select(litters_df, group, litter_number, gd0_weight)
+
+select(litters_df, gd0_weight, group)
+
+select(litters_df, group, gd0_weight:gd_of_birth)
+
+select(litters_df, group, starts_with("pups"))
+
+select(litters_df, -litter_number)
+
+select(litters_df, -starts_with("gd"))
+
+select(litters_df, group, litter_id = litter_number)
+
+select(litters_df, group, litter_id = litter_number, everything())
+
+select(litters_df, gd0_weight, everything())
+```
+
+```{r}
+rename(litters_df, litter_id = litter_number)
+
+relocate(litters_df, litter_number)
+```
+
+
+`select` vs `pull`
+
+```{r}
+select(litters_df, group)
+pull(litters_df, group)
+```
+
+
+
+## `filter`
+
+get rid of rows using `filter()`
+
+```{r}
+filter(litters_df, group == "Con7")
+
+filter(litters_df, group == "Mod8")
+
+filter(litters_df, group != "Con7")
+
+filter(litters_df, gd0_weight > 20)
+
+filter(litters_df, gd0_weight <= 20)
+
+filter(litters_df, group == "Con7" | group == "Con8")
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+filter(litters_df, !(group == "Con7"))
+
+filter(litters_df, group %in% c("Con7", "Con8"), gd0_weight > 20)
+```
+
+
+
