@@ -32,3 +32,61 @@ pulse_df =
     visit = replace(visit, visit == "bl", "00m")
   )
 ```
+
+Import / lengthen the litters dataset.
+
+``` r
+litters_df =
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(litter_number, gd0_weight, gd18_weight) |> 
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = "gd",
+    values_to = "weight"
+  ) |> 
+  mutate(
+    gd = case_match(
+      gd,
+      "gd0_weight"  ~ 0,
+      "gd18_weight" ~ 18,
+    )
+  )
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+## LoTR
+
+Import LoTR words data
+
+``` r
+fellowship_df = 
+  readxl::read_excel("data/LotR_Words.xlsx", range = "B3:D6") |> 
+  mutate(movie = "fellowship")
+
+two_towers_df = 
+  readxl::read_excel("data/LotR_Words.xlsx", range = "F3:H6") |> 
+  mutate(movie = "two towers")
+
+return_of_the_king_df = 
+  readxl::read_excel("data/LotR_Words.xlsx", range = "J3:L6") |> 
+  mutate(movie = "return of the king")
+
+lotr_df = 
+  bind_rows(fellowship_df, two_towers_df, return_of_the_king_df) |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    male:female, 
+    names_to = "gender",
+    values_to = "word"
+  ) |> 
+  relocate(movie)
+```
