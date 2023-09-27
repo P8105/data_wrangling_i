@@ -118,3 +118,20 @@ arrange(litters_df, gd0_weight)
 arrange(litters_df, group, gd0_weight)
 ```
 
+
+## pipes
+
+```{r}
+litters_df =
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(-pups_survive) |> 
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight,
+  ) |> 
+  drop_na(gd0_weight) |> 
+  arrange(group, wt_gain)
+```
+
+
