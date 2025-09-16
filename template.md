@@ -16,6 +16,11 @@ library(tidyverse)
     ## ✖ dplyr::lag()    masks stats::lag()
     ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
+``` r
+library(readxl)
+library(haven)
+```
+
 Let’s import a dataset.
 
 ``` r
@@ -148,4 +153,39 @@ pups_df =
 ``` r
 pups_df = 
   janitor::clean_names(pups_df)
+```
+
+## Okay what about excel
+
+CSVs are really great but sometimes you get an excel file.
+
+``` r
+mlb_df = 
+  read_excel("data/mlb11.xlsx")
+```
+
+Import LotR word counts.
+
+``` r
+fotr_df = 
+  read_excel("data/LotR_Words.xlsx", range = "B3:D6")
+```
+
+## SAS?????
+
+Import the PULSE data
+
+``` r
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+
+pulse_df = 
+  janitor::clean_names(pulse_df)
+```
+
+## Why do I hate read.csv so much??
+
+``` r
+litters_df_base = 
+  read.csv("data/FAS_litters.csv")
 ```
