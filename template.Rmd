@@ -59,7 +59,7 @@ pups_df =
     "data/FAS_pups.csv", 
     skip = 3,
     na = c("NA", ".", "")
-    )
+  )
 
 pups_df = 
   janitor::clean_names(pups_df)
@@ -107,6 +107,12 @@ litters_df_base =
 ```
 
 
+## What about data exporting?
+
+
+```{r}
+write_csv(fotr_df, "data/fotr_df.csv")
+```
 
 
 
