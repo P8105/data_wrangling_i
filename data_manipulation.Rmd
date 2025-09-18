@@ -81,6 +81,55 @@ select(pups_df, litter_number, sex, pd_ears)
 ```
 
 
+## `filter`
+
+use `filter()` to filter out rows.
+
+```{r}
+filter(litters_df, gd_of_birth == 20, pups_born_alive == 6)
+```
+
+look for more than five pups alive
+
+```{r}
+filter(litters_df, pups_born_alive > 5)
+filter(litters_df, pups_born_alive >= 5)
+filter(litters_df, pups_born_alive <= 5)
+```
+
+look for non-matches
+
+```{r}
+filter(litters_df, pups_born_alive != 6)
+```
+
+match to a set
+
+```{r}
+filter(litters_df, group %in% c("Con7", "Con8"))
+```
+
+filter out missing rows with `drop_na()`
+
+```{r}
+drop_na(litters_df)
+drop_na(litters_df, gd0_weight)
+```
+
+
+```{r}
+filter(pups_df, sex == 1)
+filter(pups_df, pd_walk < 11, sex == 2)
+```
+
+
+
+
+
+
+
+
+
 
 
 
