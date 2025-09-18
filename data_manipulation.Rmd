@@ -21,3 +21,66 @@ pups_df =
   janitor::clean_names(pups_df)
 ```
 
+
+## `select`
+
+`select` selects variables from my dataframe.
+
+select specific variables
+
+```{r}
+select(litters_df, group, litter_number, gd0_weight)
+```
+
+select a range
+
+```{r}
+select(litters_df, group:gd_of_birth)
+```
+
+select by removal
+
+```{r}
+select(litters_df, -group)
+select(litters_df, -(group:gd_of_birth))
+```
+
+select by prefix
+
+```{r}
+select(litters_df, group, starts_with("gd"))
+```
+
+rearrange by selecting
+
+```{r}
+select(litters_df, starts_with("gd"), group)
+select(litters_df, litter_number, everything())
+
+relocate(litters_df, litter_number)
+```
+
+rename by selecting
+
+```{r}
+select(litters_df, GROUP = group, everything())
+rename(litters_df, GROUP = group)
+```
+
+what if i only select one variable...?
+
+```{r}
+select(litters_df, group)
+
+```
+
+LA code:
+
+```{r}
+select(pups_df, litter_number, sex, pd_ears)
+```
+
+
+
+
+
