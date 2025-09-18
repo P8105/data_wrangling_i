@@ -123,6 +123,112 @@ filter(pups_df, pd_walk < 11, sex == 2)
 ```
 
 
+## `mutate`
+
+use `mutate()` to create or modify variables.
+
+```{r}
+mutate(
+  litters_df, 
+  wt_gain = gd18_weight - gd0_weight, 
+  group = str_to_lower(group)
+)
+```
+
+## `arrange`
+
+`arrange()` arranges things
+
+```{r}
+arrange(litters_df, pups_born_alive)
+arrange(litters_df, desc(group), pups_born_alive)
+
+arrange(litters_df, gd0_weight)
+```
+
+
+## PIPES
+
+Let's see a bad way to do things
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", ""))
+
+litters_df = 
+  janitor::clean_names(litters_df)
+
+litters_df2 = 
+  select(litters_df, group, litter_number, starts_with("gd"))
+
+litters_df3 = 
+  drop_na(litters_df2)
+
+litters_df4 =
+  mutate(
+    litters_df3,
+    wt_gain = gd18_weight - gd0_weight
+  )
+```
+
+
+
+```{r}
+litters_df = 
+  select(
+    janitor::clean_names(
+      read_csv("data/FAS_litters.csv", na = c("NA", ".", ""))
+    ),
+    group, litter_number, starts_with("gd")
+  )
+
+```
+
+Use pipes to avoid all this
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  select(group, litter_number, starts_with("gd")) |> 
+  drop_na() |> 
+  mutate(
+    wt_gain = gd18_weight - gd0_weight
+  )
+```
+
+Import and tidy the pups data in a piped chain of commands.
+
+```{r}
+pups_df = 
+  read_csv("data/FAS_pups.csv", skip = 3, na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  select(-pd_ears) |> 
+  filter(sex == 1) |> 
+  mutate(pd_pivot_ge7 = pd_pivot >= 7)
+```
+
+
+
+```{r}
+litters_df |> 
+  lm(wt_gain ~ gd_of_birth, data = _)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
