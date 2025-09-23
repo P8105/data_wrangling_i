@@ -3,6 +3,169 @@ title: "Tidy Data"
 output: github_document
 ---
 
-```{r}
+```{r setup, echo = FALSE, message = FALSE}
 library(tidyverse)
+library(readxl)
+library(haven)
 ```
+
+This document will show how to tidy data.
+
+## Pivot longer
+
+```{r}
+
+pulse_df =
+  read_sas("data/public_pulse_data.sas7bdat") |>
+  janitor::clean_names() |>
+  pivot_longer(
+    cols = bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    values_to = "bdi_score",
+    names_prefix = "bdi_score_"
+  ) |>
+  mutate(
+    visit = replace(visit, visit == "bl", "00m")
+    ) |>
+  relocate(id, visit)
+
+
+
+```
+
+
+Do one more example.
+
+```{r}
+
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  pivot_longer(
+    cols = gd0_weight:gd18_weight,
+    names_to = "gd_time",
+    values_to = "weight"
+  ) |>
+  mutate(
+    gd_time = case_match(
+     gd_time,
+     "gd0_weight" ~ 0,
+     "gd18_weight" ~ 18
+  ))
+
+```
+
+
+## Pivot wider
+
+Let's make up an analysis result table.
+
+```{r}
+
+analysis_df = 
+  tibble(
+    group = c("treatment", "treatment", "control", "control"),
+    time = c("pre", "post", "pre", "post"),
+    mean = c(4, 10, 4.2, 5)
+    )
+
+
+```
+
+
+Pivot wider for human readability.
+
+```{r}
+
+analysis_df |>
+  pivot_wider(
+    names_from = time,
+    values_from = mean
+  ) |>
+  knitr::kable()
+
+
+```
+
+
+## Bind tables.
+
+```{r}
+
+fellowship_ring =
+  read_excel("data/LotR_Words.xlsx", range = "B3:D6") |>
+  mutate(movie = "fellowship_ring")
+
+two_towers =
+  read_excel("data/LotR_Words.xlsx", range = "F3:H6") |>
+  mutate(movie = "two_towers")
+
+return_king =
+  read_excel("data/LotR_Words.xlsx", range = "J3:L6") |>
+  mutate(movie = "return_king")
+
+lotr_df = 
+  bind_rows(fellowship_ring, two_towers, return_king) |>
+  janitor::clean_names() |>
+  pivot_longer(
+    cols = female:male,
+    names_to = "sex",
+    values_to = "words"
+  ) |>
+  relocate(movie) |>
+  mutate(race = str_to_lower(race))
+
+
+```
+
+
+## Join FAS datasets
+
+Import `litters` dataset.
+
+```{r}
+
+litters_df =
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  mutate(
+    wt_gain = gd18_weight - gd0_weight
+    ) |>
+  separate(
+    group, into = c("dose", "day_of_treatment"), sep = 3
+  )
+
+
+```
+
+Import `pups` next!
+
+```{r}
+
+pups_df =
+  read_csv("data/FAS_pups.csv", na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  mutate(
+    sex = case_match(
+    sex,
+    1 ~ "male",
+    2 ~ "female"
+  )
+)
+
+
+
+
+
+```
+
+Join the datasets!
+
+```{r}
+
+fas_df = 
+  left_join(pups_df, litters_df, by = "litter_number") |>
+  relocate(litter_number, dose, day_of_treatment)
+```
+
+
