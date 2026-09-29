@@ -1,0 +1,79 @@
+---
+title: "Tidy Data"
+output: github_document
+---
+
+This file is for doing data tidying. 
+
+```{r}
+library(tidyverse)
+```
+
+## Let's tidy some data!
+
+```{r}
+pulse_df = 
+  haven::read_sas("data/public_pulse_data.sas7bdat") |> 
+  janitor::clean_names()
+```
+
+
+Okay, let's tidy!
+
+```{r, eval = FALSE}
+pulse_tidy_df =
+  pulse_df |> 
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    names_prefix = "bdi_score_",
+    values_to = "bdi_score"
+  ) |> 
+  mutate(
+    visit = replace(visit, visit == "bl", "00m")
+  )
+```
+
+Just use once ..
+
+```{r}
+pulse_df = 
+  haven::read_sas("data/public_pulse_data.sas7bdat") |> 
+  janitor::clean_names() |> 
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    names_prefix = "bdi_score_",
+    values_to = "bdi_score"
+  ) |> 
+  mutate(
+    visit = replace(visit, visit == "bl", "00m")
+  )
+```
+
+
+Let's practice!
+
+Import the litters data; keep columns litter number and GD weights; and tidy.
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c(".", "", "NA")) |> 
+  janitor::clean_names() |> 
+  select(litter_number, gd0_weight, gd18_weight) |> 
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = "gd", 
+    values_to = "weight"
+  ) |> 
+  mutate(
+    gd = case_match(
+      gd, 
+      "gd0_weight"  ~ 0, 
+      "gd18_weight" ~ 18, 
+    )
+  )
+```
+
+
+
