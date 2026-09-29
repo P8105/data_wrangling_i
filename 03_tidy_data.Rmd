@@ -132,6 +132,45 @@ lotr_df =
   )
 ```
 
+## join FAS datasets
+
+import both
+
+```{r}
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv",
+    skip = 3, 
+    na = c(".", "", "NA")) |> 
+  janitor::clean_names() |> 
+  mutate(
+    sex = case_match(
+      sex, 
+      1 ~ "male", 
+      2 ~ "female"
+    )
+  )
+
+litters_df =
+  read_csv(
+    "data/FAS_litters.csv",
+    na = c(".", "", "NA")) |> 
+  janitor::clean_names() |> 
+  relocate(litter_number) |> 
+  separate(group, into = c("dose", "day_of_tx"), 3) |> 
+  mutate(
+    dose = str_to_lower(dose), 
+    day_of_tx = as.numeric(day_of_tx),
+    gd_weight_gain = gd18_weight - gd0_weight
+  )
+  
+fas_df = 
+  left_join(pups_df, litters_df, by = "litter_number")
+```
+
+
+
+
 
 
 
